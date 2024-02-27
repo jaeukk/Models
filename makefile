@@ -40,6 +40,8 @@ ifeq ($(MACHINE), HOME)
 #echo $(MACHINE)
 $(info	$(MACHINE))
 #----- Directories ------------
+core = /home/jaeukk/codes/c++/cores/
+RSA = /home/jaeukk/codes/c++/Models/RSA/
 
 IDIR = -I/usr/include/ -I/home/jaeukk/lib/gsl/include -I/usr/local/include/ -I$(core) # include directory
 ODIR = obj/# object directory
@@ -68,13 +70,13 @@ LFLAGS = -Wall -std=c++11 $(DEBUG) $(LIBS) -fopenmp -O3
 $(info	$(CFLAGS))
 $(info	$(LFLAGS))
 objs_core = GeometryVector.o RandomGenerator.o etc.o PeriodicCellList.o 
-objs_main = CLI.o GenerateConfigs.o
+objs_main = GenerateConfigs.o CLI.o 
 objs_RSA = RandomSequentialAddition.o
 #objs_HSF = HardSphereFluids.o
 
 DEPS = $(core)GeometryVector.h $(core)RandomGenerator.h $(core)etc.h $(core)PeriodicCellList.h \
 	./GenerateConfigs.h \
-	RSA/RSA_Gen.h RSA/RandomSequentialAddition.h \
+	$(RSA)RSA_Gen.h $(RSA)RandomSequentialAddition.h \
 	#HSF/HSF_Gen.h HSF/HardSphereFluids.h
 
 #  ../GenerateConfigs.h ../HardSphereFluids.h ../RandomSequentialAddition.h
@@ -109,7 +111,7 @@ $(OBJ_main): $(ODIR)%.o: $(notdir %.cpp) $(DEPS)
 	echo $@ $<
 	$(CC) $(PREPRO) -o $@ $< $(CFLAGS) 
 
-$(OBJ_RSA): $(ODIR)%.o: $(addprefix RSA/, %.cpp) $(DEPS)
+$(OBJ_RSA): $(ODIR)%.o: $(addprefix $(RSA), %.cpp) $(DEPS)
 	echo $@ $<
 	$(CC) $(PREPRO) -o $@ $< $(CFLAGS) 
 
