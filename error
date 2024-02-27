@@ -1,0 +1,206 @@
+HOME
+-Wall -std=c++11 -g -I/usr/include/ -I/home/jaeukk/lib/gsl/include -I/usr/local/include/ -I/home/jaeukk/codes/c++/cores/  -c -fopenmp -O3
+-Wall -std=c++11 -g -lm -L/home/jaeukk/lib/gsl/lib -lgsl -lgslcblas -L/usr/local/lib -lnlopt -fopenmp -O3
+ obj/CLI.o  obj/GenerateConfigs.o
+ obj/GeometryVector.o  obj/RandomGenerator.o  obj/etc.o  obj/PeriodicCellList.o
+ obj/RandomSequentialAddition.o
+ /home/jaeukk/codes/c++/cores/GeometryVector.cpp  /home/jaeukk/codes/c++/cores/RandomGenerator.cpp  /home/jaeukk/codes/c++/cores/etc.cpp  /home/jaeukk/codes/c++/cores/PeriodicCellList.cpp
+ CLI.cpp  GenerateConfigs.cpp
+ RSA/RandomSequentialAddition.cpp
+"start compilation"
+echo obj/CLI.o CLI.cpp
+obj/CLI.o CLI.cpp
+g++  -o obj/CLI.o CLI.cpp -Wall -std=c++11 -g -I/usr/include/ -I/home/jaeukk/lib/gsl/include -I/usr/local/include/ -I/home/jaeukk/codes/c++/cores/  -c -fopenmp -O3 
+In file included from CLI.cpp:18:
+/home/jaeukk/codes/c++/cores/GeometryVector.h:113: warning: ignoring #pragma ivdep  [-Wunknown-pragmas]
+  113 |   #pragma ivdep
+      | 
+/home/jaeukk/codes/c++/cores/GeometryVector.h:123: warning: ignoring #pragma ivdep  [-Wunknown-pragmas]
+  123 |   #pragma ivdep
+      | 
+/home/jaeukk/codes/c++/cores/GeometryVector.h:133: warning: ignoring #pragma ivdep  [-Wunknown-pragmas]
+  133 |   #pragma ivdep
+      | 
+/home/jaeukk/codes/c++/cores/GeometryVector.h:142: warning: ignoring #pragma ivdep  [-Wunknown-pragmas]
+  142 |   #pragma ivdep
+      | 
+In file included from CLI.cpp:23:
+GenerateConfigs.h: In member function ‘virtual void PoissonPtGen::GenerateC(Configuration&)’:
+GenerateConfigs.h:197:10: warning: unused variable ‘d’ [-Wunused-variable]
+  197 |   size_t d = c.GetDimension();
+      |          ^
+In file included from CLI.cpp:27:
+RSA/RSA_Gen.h: At global scope:
+RSA/RSA_Gen.h:32:10: error: expected unqualified-id before ‘)’ token
+   32 |  RSA_Gen() : ConfigGen() {};
+      |          ^
+RSA/RSA_Gen.h:35:10: error: expected unqualified-id before ‘int’
+   35 |  RSA_Gen(int dimension, int numPrts, double numberdensity, double packingFraction = 1.0);
+      |          ^~~
+RSA/RSA_Gen.h:35:10: error: expected ‘)’ before ‘int’
+   35 |  RSA_Gen(int dimension, int numPrts, double numberdensity, double packingFraction = 1.0);
+      |         ~^~~
+      |          )
+RSA/RSA_Gen.h:41:22: error: expected ‘)’ before ‘&’ token
+   41 |  RSA_Gen(std::istream & ifile, std::ostream & ofile);
+      |         ~            ^~
+      |                      )
+RSA/RSA_Gen.h:24:15: error: member ‘ConfigGen <unnamed class>::<anonymous>’ with constructor not allowed in anonymous aggregate
+   24 | class RSA_Gen : public ConfigGen {
+      |               ^
+RSA/RSA_Gen.h:24:15: error: member ‘ConfigGen <unnamed class>::<anonymous>’ with destructor not allowed in anonymous aggregate
+RSA/RSA_Gen.h:24:15: error: member ‘ConfigGen <unnamed class>::<anonymous>’ with copy assignment operator not allowed in anonymous aggregate
+RSA/RSA_Gen.h:64:2: error: abstract declarator ‘<unnamed class>’ used as declaration
+   64 | };
+      |  ^
+RSA/RSA_Gen.h:92:17: error: expected id-expression before ‘(’ token
+   92 | RSA_Gen::RSA_Gen(int dimension, int numPrts, double numberdensity, double packingFraction = 1.0) : ConfigGen(dimension, numPrts, numberdensity) {
+      |                 ^
+In file included from CLI.cpp:27:
+RSA/RSA_Gen.h:108:17: error: expected id-expression before ‘(’ token
+  108 | RSA_Gen::RSA_Gen(std::istream & ifile, std::ostream & ofile) : ConfigGen::ConfigGen(ifile, ofile) : ConfigGen(ifile, ofile) {
+      |                 ^
+RSA/RSA_Gen.h:126:41: error: ‘void GenerateC(Configuration&)’ should have been declared inside ‘::’
+  126 | void RSA_Gen::GenerateC(Configuration &c) {
+      |                                         ^
+RSA/RSA_Gen.h: In function ‘void GenerateC(Configuration&)’:
+RSA/RSA_Gen.h:128:2: error: invalid use of ‘this’ in non-member function
+  128 |  this->GenerateP(temp);
+      |  ^~~~
+RSA/RSA_Gen.h: At global scope:
+RSA/RSA_Gen.h:132:41: error: ‘void GenerateP(SpherePacking&)’ should have been declared inside ‘::’
+  132 | void RSA_Gen::GenerateP(SpherePacking &c) {
+      |                                         ^
+RSA/RSA_Gen.h: In function ‘void GenerateP(SpherePacking&)’:
+RSA/RSA_Gen.h:134:19: error: invalid use of ‘this’ in non-member function
+  134 |  bool parallel = (this->numThreads > 1) ? true : false;
+      |                   ^~~~
+RSA/RSA_Gen.h:135:22: error: invalid use of ‘this’ in non-member function
+  135 |  omp_set_num_threads(this->numThreads);
+      |                      ^~~~
+RSA/RSA_Gen.h:136:16: error: invalid use of ‘this’ in non-member function
+  136 |  int numCut = (this->saturated) ? (int)numPrts*1.2 : numPrts;
+      |                ^~~~
+RSA/RSA_Gen.h:136:40: error: ‘numPrts’ was not declared in this scope
+  136 |  int numCut = (this->saturated) ? (int)numPrts*1.2 : numPrts;
+      |                                        ^~~~~~~
+RSA/RSA_Gen.h:138:25: error: ‘d’ was not declared in this scope
+  138 |  c = GenerateRSAPacking(d, this->numMax, parallel ? (-3) : 3, 1000, 6000, 0.49, this->random_seed, Verbosity > 5 ? std::cout : logfile, nullptr, false, numCut);
+      |                         ^
+RSA/RSA_Gen.h:138:28: error: invalid use of ‘this’ in non-member function
+  138 |  c = GenerateRSAPacking(d, this->numMax, parallel ? (-3) : 3, 1000, 6000, 0.49, this->random_seed, Verbosity > 5 ? std::cout : logfile, nullptr, false, numCut);
+      |                            ^~~~
+RSA/RSA_Gen.h:138:81: error: invalid use of ‘this’ in non-member function
+  138 |  c = GenerateRSAPacking(d, this->numMax, parallel ? (-3) : 3, 1000, 6000, 0.49, this->random_seed, Verbosity > 5 ? std::cout : logfile, nullptr, false, numCut);
+      |                                                                                 ^~~~
+RSA/RSA_Gen.h:139:2: error: invalid use of ‘this’ in non-member function
+  139 |  this->SetRandomSeed(this->random_seed + 3);
+      |  ^~~~
+RSA/RSA_Gen.h:139:22: error: invalid use of ‘this’ in non-member function
+  139 |  this->SetRandomSeed(this->random_seed + 3);
+      |                      ^~~~
+RSA/RSA_Gen.h:153:6: error: invalid use of ‘this’ in non-member function
+  153 |  if (this->rho > 0.0) {
+      |      ^~~~
+RSA/RSA_Gen.h:154:23: error: invalid use of ‘this’ in non-member function
+  154 |   double factor = pow(this->numPrts / this->rho, 1.0/this->d);
+      |                       ^~~~
+RSA/RSA_Gen.h:154:39: error: invalid use of ‘this’ in non-member function
+  154 |   double factor = pow(this->numPrts / this->rho, 1.0/this->d);
+      |                                       ^~~~
+RSA/RSA_Gen.h:154:54: error: invalid use of ‘this’ in non-member function
+  154 |   double factor = pow(this->numPrts / this->rho, 1.0/this->d);
+      |                                                      ^~~~
+CLI.cpp: At global scope:
+CLI.cpp:28:1: error: ‘models’ does not name a type
+   28 | models.emplace_back("RSA")
+      | ^~~~~~
+In file included from CLI.cpp:19:
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h: In instantiation of ‘PeriodicCellList<OtherCharacteristics>::PeriodicCellList(const PeriodicCellList<OtherCharacteristics>&) [with OtherCharacteristics = AtomName]’:
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:1306:28:   required from here
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:69:7: warning: ‘PeriodicCellList<AtomName>::SortedVicinityList’ will be initialized after [-Wreorder]
+   69 |  bool SortedVicinityList;//use sorted vicinity lattice list, which takes some time to sort, but makes iteration more efficient
+      |       ^~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:68:17: warning:   ‘double PeriodicCellList<AtomName>::VicinityLatticesRc2’ [-Wreorder]
+   68 |  mutable double VicinityLatticesRc2;
+      |                 ^~~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:292:2: warning:   when initialized here [-Wreorder]
+  292 |  PeriodicCellList(const PeriodicCellList<OtherCharacteristics> & source)
+      |  ^~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:68:17: warning: ‘PeriodicCellList<AtomName>::VicinityLatticesRc2’ will be initialized after [-Wreorder]
+   68 |  mutable double VicinityLatticesRc2;
+      |                 ^~~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:51:30: warning:   ‘std::vector<GeometryVector> PeriodicCellList<AtomName>::ParticleCartesians’ [-Wreorder]
+   51 |  std::vector<GeometryVector> ParticleCartesians;
+      |                              ^~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:292:2: warning:   when initialized here [-Wreorder]
+  292 |  PeriodicCellList(const PeriodicCellList<OtherCharacteristics> & source)
+      |  ^~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:51:30: warning: ‘PeriodicCellList<AtomName>::ParticleCartesians’ will be initialized after [-Wreorder]
+   51 |  std::vector<GeometryVector> ParticleCartesians;
+      |                              ^~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:50:30: warning:   ‘std::vector<GeometryVector> PeriodicCellList<AtomName>::ParticleRelatives’ [-Wreorder]
+   50 |  std::vector<GeometryVector> ParticleRelatives;
+      |                              ^~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:292:2: warning:   when initialized here [-Wreorder]
+  292 |  PeriodicCellList(const PeriodicCellList<OtherCharacteristics> & source)
+      |  ^~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h: In instantiation of ‘PeriodicCellList<OtherCharacteristics>::PeriodicCellList(const PeriodicCellList<OtherCharacteristics>&) [with OtherCharacteristics = double]’:
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:1362:7:   required from here
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:69:7: warning: ‘PeriodicCellList<double>::SortedVicinityList’ will be initialized after [-Wreorder]
+   69 |  bool SortedVicinityList;//use sorted vicinity lattice list, which takes some time to sort, but makes iteration more efficient
+      |       ^~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:68:17: warning:   ‘double PeriodicCellList<double>::VicinityLatticesRc2’ [-Wreorder]
+   68 |  mutable double VicinityLatticesRc2;
+      |                 ^~~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:292:2: warning:   when initialized here [-Wreorder]
+  292 |  PeriodicCellList(const PeriodicCellList<OtherCharacteristics> & source)
+      |  ^~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:68:17: warning: ‘PeriodicCellList<double>::VicinityLatticesRc2’ will be initialized after [-Wreorder]
+   68 |  mutable double VicinityLatticesRc2;
+      |                 ^~~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:51:30: warning:   ‘std::vector<GeometryVector> PeriodicCellList<double>::ParticleCartesians’ [-Wreorder]
+   51 |  std::vector<GeometryVector> ParticleCartesians;
+      |                              ^~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:292:2: warning:   when initialized here [-Wreorder]
+  292 |  PeriodicCellList(const PeriodicCellList<OtherCharacteristics> & source)
+      |  ^~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:51:30: warning: ‘PeriodicCellList<double>::ParticleCartesians’ will be initialized after [-Wreorder]
+   51 |  std::vector<GeometryVector> ParticleCartesians;
+      |                              ^~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:50:30: warning:   ‘std::vector<GeometryVector> PeriodicCellList<double>::ParticleRelatives’ [-Wreorder]
+   50 |  std::vector<GeometryVector> ParticleRelatives;
+      |                              ^~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:292:2: warning:   when initialized here [-Wreorder]
+  292 |  PeriodicCellList(const PeriodicCellList<OtherCharacteristics> & source)
+      |  ^~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h: In instantiation of ‘PeriodicCellList<OtherCharacteristics>::PeriodicCellList(const PeriodicCellList<add>&, const OtherCharacteristics&) [with add = double; OtherCharacteristics = AtomName]’:
+RSA/RSA_Gen.h:129:29:   required from here
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:69:7: warning: ‘PeriodicCellList<AtomName>::SortedVicinityList’ will be initialized after [-Wreorder]
+   69 |  bool SortedVicinityList;//use sorted vicinity lattice list, which takes some time to sort, but makes iteration more efficient
+      |       ^~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:68:17: warning:   ‘double PeriodicCellList<AtomName>::VicinityLatticesRc2’ [-Wreorder]
+   68 |  mutable double VicinityLatticesRc2;
+      |                 ^~~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:317:25: warning:   when initialized here [-Wreorder]
+  317 |  template<typename add> PeriodicCellList(const PeriodicCellList<add> & source, const OtherCharacteristics & cha)
+      |                         ^~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:68:17: warning: ‘PeriodicCellList<AtomName>::VicinityLatticesRc2’ will be initialized after [-Wreorder]
+   68 |  mutable double VicinityLatticesRc2;
+      |                 ^~~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:51:30: warning:   ‘std::vector<GeometryVector> PeriodicCellList<AtomName>::ParticleCartesians’ [-Wreorder]
+   51 |  std::vector<GeometryVector> ParticleCartesians;
+      |                              ^~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:317:25: warning:   when initialized here [-Wreorder]
+  317 |  template<typename add> PeriodicCellList(const PeriodicCellList<add> & source, const OtherCharacteristics & cha)
+      |                         ^~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:51:30: warning: ‘PeriodicCellList<AtomName>::ParticleCartesians’ will be initialized after [-Wreorder]
+   51 |  std::vector<GeometryVector> ParticleCartesians;
+      |                              ^~~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:50:30: warning:   ‘std::vector<GeometryVector> PeriodicCellList<AtomName>::ParticleRelatives’ [-Wreorder]
+   50 |  std::vector<GeometryVector> ParticleRelatives;
+      |                              ^~~~~~~~~~~~~~~~~
+/home/jaeukk/codes/c++/cores/PeriodicCellList.h:317:25: warning:   when initialized here [-Wreorder]
+  317 |  template<typename add> PeriodicCellList(const PeriodicCellList<add> & source, const OtherCharacteristics & cha)
+      |                         ^~~~~~~~~~~~~~~~
+make: *** [makefile:110: obj/CLI.o] Error 1
