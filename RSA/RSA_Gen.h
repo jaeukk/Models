@@ -109,8 +109,8 @@ RSA_gen::RSA_gen(int dimension, int numPrts, double numberdensity, double packin
 RSA_gen::RSA_gen(std::istream & ifile, std::ostream & ofile) : ConfigGen(ifile, ofile) {
 	int seed, num;
 
-	ofile << "PackingFraction = ";	ifile >> this->targetPhi;	ofile << this->targetPhi;
-	ofile << "Random seed = ";		ifile >> seed;	ofile << seed;
+	ofile << "PackingFraction = ";	Echo(ifile,ofile, this->targetPhi);
+	ofile << "Random seed = ";		Echo(ifile,ofile, seed);
 	this->SetRandomSeed(seed);
 
 	this->saturated = (this->targetPhi >= 0.99*PhiC(this->d)) ? true : false;
