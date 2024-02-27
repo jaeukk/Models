@@ -21,24 +21,25 @@
  */
 double PhiC(size_t d);
 
-class RSA_Gen : public ConfigGen {
+class RSA_gen : public ConfigGen {
 private:
 	double targetPhi;	//target packing fraction
 	bool saturated;		//indicate whether we generate a saturated RSA packing
 	size_t numMax;
-	int random_seed = 0;
+	RandomGenerator rng;
+
 public:
 
-	RSA_Gen() : ConfigGen() {};
+	RSA_gen() : ConfigGen() {};
 
 	//set numberdensity = -1 if you don't want to rescale the system.
-	RSA_Gen(int dimension, int numPrts, double numberdensity, double packingFraction = 1.0);
+	RSA_gen(int dimension, int numPrts, double numberdensity, double packingFraction = 1.0);
 
 	// //Saturated RSA
-	// RSA_Gen(int dimension, int numPrts, double numberdensity);
+	// RSA_gen(int dimension, int numPrts, double numberdensity);
 
 	//CLI form
-	RSA_Gen(std::istream & ifile, std::ostream & ofile);
+	RSA_gen(std::istream & ifile, std::ostream & ofile);
 
 	virtual void SetNumPrts(int n) {
 		this->numMax = (int)round(n / this->numPrts);
@@ -60,7 +61,7 @@ public:
 	virtual void GenerateC(Configuration &c);
 	virtual void GenerateP(SpherePacking &c);
 
-	void SetRandomSeed(int i){this->random_seed = i;}
+	void SetRandomSeed(int i){this->rng.seed(i);}
 };
 
 
@@ -86,10 +87,10 @@ double PhiC(size_t d) {
 }
 
 /****************************
- *	RSA_Gen: constructors
+ *	RSA_gen: constructors
  ****************************/
 //set numberdensity = -1 if you don't want to rescale the system.
-RSA_Gen::RSA_Gen(int dimension, int numPrts, double numberdensity, double packingFraction = 1.0) : ConfigGen(dimension, numPrts, numberdensity) {
+RSA_gen::RSA_gen(int dimension, int numPrts, double numberdensity, double packingFraction) : ConfigGen(dimension, numPrts, numberdensity) {
 	this->d = dimension;	this->numPrts = numPrts;	this->rho = numberdensity;	this->targetPhi = packingFraction;
 	this->numThreads = 1;
 	this->saturated = (this->targetPhi >= 0.99*PhiC(this->d)) ? true : false;
@@ -99,16 +100,19 @@ RSA_Gen::RSA_Gen(int dimension, int numPrts, double numberdensity, double packin
 		this->numMax = (int)round(PhiC(dimension) / packingFraction * numPrts);
 }
 //Saturated RSA
-// RSA_Gen::RSA_Gen(int dimension, int numPrts, double numberdensity) {
+// RSA_gen::RSA_gen(int dimension, int numPrts, double numberdensity) {
 // 	this->d = dimension;	this->numPrts = numPrts;	this->rho = numberdensity;
 // 	this->saturated = true;	this->numThreads = 1;
 // 	this->numMax = numPrts;
 // }
 //CLI form
-RSA_Gen::RSA_Gen(std::istream & ifile, std::ostream & ofile) : ConfigGen::ConfigGen(ifile, ofile) : ConfigGen(ifile, ofile) {
+RSA_gen::RSA_gen(std::istream & ifile, std::ostream & ofile) : ConfigGen(ifile, ofile) {
+	int seed, num;
+
 	ofile << "PackingFraction = ";	ifile >> this->targetPhi;	ofile << this->targetPhi;
-	ofile << "Random seed = ";		ifile >> this->random_seed;	ofile << this->random_seed;
-	this->numThreads = 1;
+	ofile << "Random seed = ";		ifile >> seed;	ofile << seed;
+	this->SetRandomSeed(seed);
+
 	this->saturated = (this->targetPhi >= 0.99*PhiC(this->d)) ? true : false;
 	if (this->saturated){
 		this->numMax = numPrts;
@@ -116,27 +120,30 @@ RSA_Gen::RSA_Gen(std::istream & ifile, std::ostream & ofile) : ConfigGen::Config
 	}
 	else
 		this->numMax = (int)round(PhiC(this->d) / this->targetPhi * numPrts);
+
+	ofile << "Number of threads = ";
+	Echo(ifile, ofile, num);
+	this->SetNumThreads(num);
 }
 
 
  /****************************
- *	RSA_Gen: member functions
+ *	RSA_gen: member functions
  ****************************/
 
-void RSA_Gen::GenerateC(Configuration &c) {
+void RSA_gen::GenerateC(Configuration &c) {
 	SpherePacking temp;
 	this->GenerateP(temp);
 	c = Configuration(temp, "a");
 }
 
-void RSA_Gen::GenerateP(SpherePacking &c) {
+void RSA_gen::GenerateP(SpherePacking &c) {
 //#ifdef RandomSequentialAddition_Included
 	bool parallel = (this->numThreads > 1) ? true : false;
 	omp_set_num_threads(this->numThreads);
 	int numCut = (this->saturated) ? (int)numPrts*1.2 : numPrts;
 	
-	c = GenerateRSAPacking(d, this->numMax, parallel ? (-3) : 3, 1000, 6000, 0.49, this->random_seed, Verbosity > 5 ? std::cout : logfile, nullptr, false, numCut);
-	this->SetRandomSeed(this->random_seed + 3);
+	c = GenerateRSAPacking(d, this->numMax, parallel ? (-3) : 3, 1000, 6000, 0.49, this->rng.RandomInt(), Verbosity > 5 ? std::cout : logfile, nullptr, false, numCut);
 	//if (this->saturated) {
 	//	c = GenerateRSAPacking(d, numPrts, parallel, (int)numPrts*1.2);
 	//}
