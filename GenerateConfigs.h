@@ -69,7 +69,7 @@ protected:
 public:
 
 	/** A default constructor of ConfigGen. */
-	ConfigGen() { this->rho = 1.0; this->numPrts = 0; this->d = 1; this->numThreads = 1; };
+	ConfigGen() { this->rho = 1.0; this->numPrts = 0; this->d = 1; this->numThreads = 1; }
 
 	ConfigGen(int dimensions, int N, double rho);
 
@@ -86,24 +86,27 @@ public:
 	//Change system parameters 
 	/** A virtual member function to change number density (must be redefined).
 	 * @param rho	new number density. */
-	virtual void SetRho(double rho) { std::cerr << "SetRho() is undefined" << std::endl; };
+	virtual void SetRho(double rho) { std::cerr << "SetRho() is undefined" << std::endl; }
 
 	/** A virtual member function to change particle number (must be redefined).
 	 * @param num	new particle numbers. */
-	virtual void SetNumPrts(int num) { std::cerr << "SetNumPrts() is undefined" << std::endl; };
+	virtual void SetNumPrts(int num) { std::cerr << "SetNumPrts() is undefined" << std::endl; }
 
 	/** A virtual member function to change the packing fraction (must be redefined).
 	 * @param phi	new packing fraction. */
-	virtual void SetPackingFraction(double phi) { std::cerr << "SetPackingFraction() is undefined" << std::endl; };	//must be redefined
+	virtual void SetPackingFraction(double phi) { std::cerr << "SetPackingFraction() is undefined" << std::endl; }	//must be redefined
 	
 	/** @return the number density.*/
-	virtual double GetRho() { return this->rho; };
+	virtual double GetRho() { return this->rho; }
 	
 	/** @return the particle number.*/
-	virtual size_t GetNumPrts() { return this->numPrts; };
+	virtual size_t GetNumPrts() { return this->numPrts; }
 	
 	/** Redefin the number of threads that are used to construct realizations.*/
-	virtual void SetNumThreads(int numThreads) { this->numThreads = numThreads; };
+	virtual void SetNumThreads(int numThreads) { 
+		this->numThreads = numThreads; 
+		omp_set_num_threads(this->numThreads);
+		}
 
 	/** A pure virutal member function to input extra parameters. 
 	 * @param[in] option	the number of option.

@@ -12,7 +12,7 @@
 ConfigGen::ConfigGen(int dimensions, int N, double rho)
 {
 	this->d = dimensions;
-	this->N = numPrts;
+	this->numPrts = N;
 	this->rho = rho;
 }
 

@@ -18,20 +18,20 @@
 #include <GeometryVector.h>
 #include <PeriodicCellList.h>
 #include <etc.h>
-size_t Verbosity = 2;
 
 #include "GenerateConfigs.h"
-std::vector<std::string> models({std::string("Poisson")});
-
-//#ifdef RSA_Gen
+//#ifdef RSA_gen
 #include "RSA/RSA_Gen.h"
-models.emplace_back("RSA")
 //#endif
 
+
+size_t Verbosity = 2;
 int main(int argc, char ** argv){
-	char tempstring[1000];
 	/* An extern variable defined in ${core}/etc.h */
-	Verbosity = 3;
+	std::vector<std::string> models {"Poisson"};
+	models.push_back("RSA");
+
+	char tempstring[1000];
 
 	std::istream & ifile=std::cin;
 	std::ostream & ofile=std::cout;
@@ -54,7 +54,7 @@ int main(int argc, char ** argv){
 			if (std::find(models.begin(), models.end(), std::string(tempstring)) != models.end() ){
 				/* Input  */
 				if (strcmp(tempstring, "RSA") == 0){
-					model = new RSA_Gen(ifile, ofile);
+					model = new RSA_gen(ifile, ofile);
 				}
 				// else if (strcmp(tempstring, "HSF") == 0){
 
@@ -65,6 +65,57 @@ int main(int argc, char ** argv){
 			}
 
 			/* Output ... */
+			
+			size_t Nc;
+			std::string output_name, output_type;
+
+			ofile << "Number of configurations = ";
+			Echo(ifile, ofile, Nc);
+
+			ofile << "output prefix = ";
+			Echo(ifile, ofile, output_name);
+
+			ofile << "output type (ConfigPack/SpherePacking[.txt]) = ";
+			Echo(ifile, ofile, output_type);
+
+			if (strcmp(output_type.c_str(), "ConfigPack") == 0){
+				ConfigurationPack save(output_name);
+
+				{
+					/* check the particle radius */
+					SpherePacking c;
+					model->GenerateP(c);
+					ofile << "Particle radius = " << c.GetMaxRadius() <<"\n";
+					save.AddConfig(Configuration(c, "a"));
+				}
+
+				ofile << "output file = "<< output_name  << ".ConfigPakc\n";
+				ofile << "Generating Configurations ... \n";
+				progress_display pd(Nc);
+				pd ++ ;
+				for(int i = 1; i < Nc; i++){
+					Configuration c;
+					model->GenerateC(c);
+					save.AddConfig(c);
+					pd++;	
+				}
+
+			}
+			else if (strcmp(output_type.c_str(), "SpherePacking") == 0){
+				output_name += std::string("__%05d");
+				ofile << "output file = "<< output_name <<"\n";
+				progress_display pd(Nc);
+				
+				for(int i = 0; i < Nc; i++){
+					sprintf(tempstring, output_name.c_str(), i);
+					SpherePacking c;
+					model->GenerateP(c);
+					WriteConfiguration(c, tempstring);
+					pd++;	
+				}
+			}
+			ofile << "\n Done!\n";
+
 
 
 			return 0;
