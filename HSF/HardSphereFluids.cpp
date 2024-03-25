@@ -1,5 +1,5 @@
 #include "HardSphereFluids.h"
-#include "../GenerateConfigs.h"
+
 void HSF::LatticePacking(int N, double PackingFraction, std::vector<GeometryVector> & basis, SpherePacking & config) {
 	int dimension = basis.size();
 	int L = (int)ceil(pow(N, 1.0 / dimension));

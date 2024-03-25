@@ -14,7 +14,7 @@
 	** Paracrystals (in progress)
  */
 
-
+#include "../GenerateConfigs.h"
 
 /** Give basis vectors of well-known lattices
  * @param[in] latticeType	The name of Bravais lattice, e.g., 

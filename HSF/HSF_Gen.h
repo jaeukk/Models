@@ -17,13 +17,13 @@
 
 class HSF_Gen : public ConfigGen {
 private:
-	int samplingInterval;
+	int samplingInterval = 1000;
 public:
 	HSF setting;
 
 	HSF_Gen() : ConfigGen::ConfigGen() {};
 
-	HSF_Gen(int dimension, int N, double packingFraction, double numberDensity);
+	HSF_Gen(int dimension, int N, double numberDensity, double packingFraction);
 
 	HSF_Gen(std::istream & ifile, std::ostream & ofile);
 
@@ -47,31 +47,21 @@ public:
 	virtual void GenerateP(SpherePacking &c);
 };
 
-HSF_Gen::HSF_Gen(int dimension, int N, double packingFraction, double numberDensity) {
-	this->d = dimension;
-	this->N = N;
-	this->rho = numberDensity;
+HSF_Gen::HSF_Gen(int dimension, int N, double numberDensity, double packingFraction): ConfigGen(dimension, N, numberDensity) {
 
 	setting = HSF(dimension, N, packingFraction);	setting.SetNumThreads(1);
 	setting.RescaleConfig(numberDensity);
 	//setting.Prepare();
-	this->samplingInterval = 1000;
 	std::cout << "Default sampling interval = " << this->samplingInterval << " MCcycles\n";
 }
 
-HSF_Gen::HSF_Gen(std::istream & ifile, std::ostream & ofile) {
-	double packingFraction;
-	ofile << "dimension = ";				ifile >> this->d;
-	ofile << "the number of particles = ";	ifile >> this->N;
-	ofile << "the number density = ";		ifile >> this->rho;
-	ofile << "packing fraction = ";			ifile >> packingFraction;
-	ofile << "sampling interval (MC  cycles) = "; ifile >> this->samplingInterval;
+HSF_Gen::HSF_Gen(std::istream & ifile, std::ostream & ofile) : ConfigGen(ifile, ofile) {
+	double phi;
+	ofile << "packing fraction = ";	Echo(ifile, ofile, phi);
+	ofile << "sampling interval (MC  cycles) = "; Echo(ifile, ofile, this->samplingInterval);
 
-	setting = HSF(this->d, this->N, packingFraction);	setting.SetNumThreads(1);
+	setting = HSF(this->d, this->N, phi);	setting.SetNumThreads(1);
 	setting.RescaleConfig(this->rho);
-	//setting.Prepare();
-	//this->samplingInterval = 100;
-	std::cout << "Default sampling interval = " << this->samplingInterval << " MCcycles\n";
 }
 
 void HSF_Gen::GenerateP(SpherePacking &c) {

@@ -11,6 +11,8 @@
 #include <PeriodicCellList.h>
 #include <RandomGenerator.h>
 
+#include "../Lattices/Lattice.h"
+
 const double tolerance = 1e-3;
 const double error = 8e-3;// -> 1e-2
 //Monte Carlo simulations of Hard-sphere fluids

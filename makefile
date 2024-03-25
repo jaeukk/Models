@@ -42,6 +42,7 @@ $(info	$(MACHINE))
 #----- Directories ------------
 core = /home/jaeukk/codes/c++/cores/
 RSA = /home/jaeukk/codes/c++/Models/RSA/
+HSF = /home/jaeukk/codes/c++/Models/HSF/
 
 IDIR = -I/usr/include/ -I/home/jaeukk/lib/gsl/include -I/usr/local/include/ -I$(core) # include directory
 ODIR = obj/# object directory
@@ -71,30 +72,36 @@ $(info	$(CFLAGS))
 $(info	$(LFLAGS))
 objs_core = GeometryVector.o RandomGenerator.o etc.o PeriodicCellList.o 
 objs_main = GenerateConfigs.o CLI.o 
+objs_Latt = Lattice.o
 objs_RSA = RandomSequentialAddition.o
-#objs_HSF = HardSphereFluids.o
+objs_HSF = HardSphereFluids.o
 
 DEPS = $(core)GeometryVector.h $(core)RandomGenerator.h $(core)etc.h $(core)PeriodicCellList.h \
 	./GenerateConfigs.h \
+	./Lattices/Lattice.h \
 	$(RSA)RSA_Gen.h $(RSA)RandomSequentialAddition.h \
-	#HSF/HSF_Gen.h HSF/HardSphereFluids.h
+	$(HSF)HSF_Gen.h $(HSF)HardSphereFluids.h
 
 #  ../GenerateConfigs.h ../HardSphereFluids.h ../RandomSequentialAddition.h
 
 OBJ_core = $(patsubst %.o, $(ODIR)%.o, $(objs_core))
 OBJ_main = $(patsubst %.o, $(ODIR)%.o, $(objs_main))
+OBJ_Latt = $(patsubst %.o, $(ODIR)%.o, $(objs_Latt))
 OBJ_RSA = $(patsubst %.o, $(ODIR)%.o, $(objs_RSA))
 OBJ_HSF = $(patsubst %.o, $(ODIR)%.o, $(objs_HSF))
-OBJ = $(OBJ_core)  $(OBJ_main) $(OBJ_RSA) #$(OBJ_HSF)
+OBJ = $(OBJ_core)  $(OBJ_main) $(OBJ_RSA) $(OBJ_HSF) $(OBJ_Latt)
 #$(info $(CC) $(CFLAGS))  
 $(info	$(OBJ_main))
 $(info	$(OBJ_core))
+$(info	$(OBJ_Latt))
 $(info	$(OBJ_RSA))
+$(info	$(OBJ_HSF))
 
 SRC_core = $(patsubst %.o, $(core)%.cpp, $(objs_core))
 SRC_main = $(patsubst %.o, %.cpp, $(objs_main))
+SRC_RSA = $(patsubst %.o, Lattices/%.cpp, $(objs_Latt))
 SRC_RSA = $(patsubst %.o, RSA/%.cpp, $(objs_RSA))
-#SRC_HSF = $(patsubst %.o, HSF/%.cpp, $(objs_HSF))
+SRC_HSF = $(patsubst %.o, HSF/%.cpp, $(objs_HSF))
 
 
 $(info	$(SRC_core))
@@ -115,9 +122,13 @@ $(OBJ_RSA): $(ODIR)%.o: $(addprefix $(RSA), %.cpp) $(DEPS)
 	echo $@ $<
 	$(CC) $(PREPRO) -o $@ $< $(CFLAGS) 
 
-# $(OBJ_HSF): $(ODIR)%.o: $(addprefix HSF/, %.cpp) $(DEPS)
-# 	echo $@ $<
-# 	$(CC) $(PREPRO) -o $@ $< $(CFLAGS) 
+$(OBJ_HSF): $(ODIR)%.o: $(addprefix $(HSF), %.cpp) $(DEPS)
+	echo $@ $<
+	$(CC) $(PREPRO) -o $@ $< $(CFLAGS) 
+
+$(OBJ_Latt): $(ODIR)%.o: $(addprefix Lattices/, %.cpp) $(DEPS)
+	echo $@ $<
+	$(CC) $(PREPRO) -o $@ $< $(CFLAGS) 
 
 $(OBJ_core): $(ODIR)%.o: $(addprefix $(core), %.cpp) $(DEPS)
 	$(info $(CC) $(PREPRO) -o $@ $< $(CFLAGS)  )  

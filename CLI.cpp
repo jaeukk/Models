@@ -23,6 +23,7 @@
 //#ifdef RSA_gen
 #include "RSA/RSA_Gen.h"
 //#endif
+#include "HSF/HSF_Gen.h"
 
 
 size_t Verbosity = 2;
@@ -30,6 +31,7 @@ int main(int argc, char ** argv){
 	/* An extern variable defined in ${core}/etc.h */
 	std::vector<std::string> models {"Poisson"};
 	models.push_back("RSA");
+	models.push_back("HSF");
 
 	char tempstring[1000];
 
@@ -56,9 +58,9 @@ int main(int argc, char ** argv){
 				if (strcmp(tempstring, "RSA") == 0){
 					model = new RSA_gen(ifile, ofile);
 				}
-				// else if (strcmp(tempstring, "HSF") == 0){
-
-				// }
+				else if (strcmp(tempstring, "HSF") == 0){
+					model = new HSF_Gen(ifile, ofile);
+				}
 			}
 			else{
 				ofile << tempstring << " is not in the available model list.\n";
