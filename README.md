@@ -33,4 +33,13 @@ CLI of generating some selective disordered models.
 		output_type = (ConfigPack/SpherePacking). 
 			ConfigPack: save `point configurations' in a ConfigPack file.
 			SpherePacking: save `sphere packings' in separated text files.
-		
+
+	* HSF (equilibrium hard spheres):
+	./models.out models	<<< "HSF ${dimensions} ${particle_number} ${number_density} ${packing_fraction} ${seed} ${num_threads} ${interval} ${configuration_number} ${output_prefix} ${output_type}"
+		# seed = random seed
+		# interval = sampling interval in the unit of MC cycles.
+		# the code generates the saturated RSA, if ${packing_fraction} is greater than or equal to the known saturated packing fraction (e.g., 1.0)
+		output_type = (ConfigPack/SpherePacking). 
+			ConfigPack: save `point configurations' in a ConfigPack file.
+			SpherePacking: save `sphere packings' in separated text files.
+			

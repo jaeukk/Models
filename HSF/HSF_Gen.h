@@ -58,10 +58,14 @@ HSF_Gen::HSF_Gen(int dimension, int N, double numberDensity, double packingFract
 HSF_Gen::HSF_Gen(std::istream & ifile, std::ostream & ofile) : ConfigGen(ifile, ofile) {
 	double phi;
 	ofile << "packing fraction = ";	Echo(ifile, ofile, phi);
-	ofile << "sampling interval (MC  cycles) = "; Echo(ifile, ofile, this->samplingInterval);
-
-	setting = HSF(this->d, this->N, phi);	setting.SetNumThreads(1);
+	setting = HSF(this->d, this->N, phi);	
 	setting.RescaleConfig(this->rho);
+	int seed, num_threads;
+	ofile << "random seed = "; Echo(ifile, ofile, seed);
+	setting.SetRandomSeed(seed);
+	ofile << "number of threads = "; Echo(ifile, ofile, num_threads);
+	setting.SetNumThreads(num_threads);
+	ofile << "sampling interval (MC  cycles) = "; Echo(ifile, ofile, this->samplingInterval);
 }
 
 void HSF_Gen::GenerateP(SpherePacking &c) {
