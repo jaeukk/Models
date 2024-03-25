@@ -12,14 +12,14 @@
 ConfigGen::ConfigGen(int dimensions, int N, double rho)
 {
 	this->d = dimensions;
-	this->numPrts = N;
+	this->N = N;
 	this->rho = rho;
 }
 
 ConfigGen::ConfigGen(std::istream &ifile, std::ostream &ofile)
 {
 	ofile << "Dimensions = "; 		Echo (ifile, ofile, this->d);
-	ofile << "Particle Number = "; 	Echo (ifile, ofile, this->numPrts);
+	ofile << "Particle Number = "; 	Echo (ifile, ofile, this->N);
 	ofile << "Number Density = "; 	Echo (ifile, ofile, this->rho);
 }
 
@@ -44,7 +44,7 @@ ConfigGen::ConfigGen(std::istream &ifile, std::ostream &ofile)
 //
 //EmptyBox::EmptyBox() {
 //	/* inherited parameters */
-//	this->d = 0;	this->rho = 0;	this->numPrts = 0;	this->numThreads = 1;
+//	this->d = 0;	this->rho = 0;	this->N = 0;	this->numThreads = 1;
 //	/* non-inherited ones */
 //	this->Cell_Volume = 0;	this->F_Cell = Configuration();
 //}
@@ -87,3 +87,43 @@ ConfigGen::ConfigGen(std::istream &ifile, std::ostream &ofile)
 //	this->Cell_Volume = copy.Cell_Volume;
 //}
 
+/* -----------------------------
+	Poisson point process
+ -------------------------------*/
+
+
+PoissonPtGen::PoissonPtGen(std::istream & ifile, std::ostream & ofile) : ConfigGen(ifile, ofile)
+ {
+	// ofile	<< "------------------------------------------\n"
+	// 		<< "	Spatially uncorrelated point patterns \n"
+	// 		<< "------------------------------------------\n" << std::endl;
+	ofile << "Modes (0 = cannonical/ 1 = grand cannonical)= ";
+	Echo(ifile, ofile, this->mode);
+	if (this->mode == 1 || this->mode == 0)
+		ofile << this->mode << "\n";
+	else {
+		std::cout << "Wrong mode!\n";
+		return;
+	}
+}
+
+void PoissonPtGen::GenerateC(Configuration &c)
+{
+	c = GetUnitCubicBox(this->d, 0.1);
+	double volume = this-> N / this->rho;
+	c.Resize(volume);
+
+	size_t N_ = this->GetExpectedNumPrts((double)this->N);
+	for (size_t i = 0; i < N_; i++) {
+		//Randomly place a single point inside the fundamental cell.
+		c.Insert("a", this->rng);	
+	}
+}
+
+void PoissonPtGen::GenerateP(SpherePacking &c)
+{
+	Configuration c_;
+	this->GenerateC(c_);
+	c = SpherePacking(c_,0.0);
+//	std::cout << "PoissonPtGen::GenerateP is not defined.\n"; 
+}

@@ -62,14 +62,14 @@ class ConfigGen
 {
 protected:
 	double rho;		//< number density
-	size_t numPrts,	//< (expected) number of particles
+	size_t N,	//< (expected) number of particles
 		numThreads;	//< the number of threads that are used to construct a system.
 	DimensionType d;//< space dimension
 
 public:
 
 	/** A default constructor of ConfigGen. */
-	ConfigGen() { this->rho = 1.0; this->numPrts = 0; this->d = 1; this->numThreads = 1; }
+	ConfigGen() { this->rho = 1.0; this->N = 0; this->d = 1; this->numThreads = 1; }
 
 	ConfigGen(int dimensions, int N, double rho);
 
@@ -90,7 +90,8 @@ public:
 
 	/** A virtual member function to change particle number (must be redefined).
 	 * @param num	new particle numbers. */
-	virtual void SetNumPrts(int num) { std::cerr << "SetNumPrts() is undefined" << std::endl; }
+	virtual void SetNumPrts(int num) {	this->N = num; } 
+		//std::cerr << "SetNumPrts() is undefined" << std::endl; }
 
 	/** A virtual member function to change the packing fraction (must be redefined).
 	 * @param phi	new packing fraction. */
@@ -100,7 +101,7 @@ public:
 	virtual double GetRho() { return this->rho; }
 	
 	/** @return the particle number.*/
-	virtual size_t GetNumPrts() { return this->numPrts; }
+	virtual size_t GetNumPrts() { return this->N; }
 	
 	/** Redefin the number of threads that are used to construct realizations.*/
 	virtual void SetNumThreads(int numThreads) { 
@@ -158,12 +159,11 @@ protected:
 					//< 1: particle number can vary
 	RandomGenerator rng;	//< a random number generator
 	
-	inline size_t GetExpectedNumPrts(double cell_volume) {
-		double mean = cell_volume * this->rho;
-		if (mode == 0) {
+	inline size_t GetExpectedNumPrts(double mean) {
+		if (this->mode == 0) {
 			return (int)round(mean);
 		}
-		else if (mode == 1) {
+		else if (this->mode == 1) {
 			return rng.PoissonRNG(mean);
 		}
 		else{
@@ -196,26 +196,13 @@ public:
 	
 	/** Empty the simulation box and generate a Poisson point pattern of a given number density. 
 	 *	@param[in,out] c	A periodic simulation box whose volume should be positive!	 */
-	virtual void GenerateC(Configuration & c) {
-		size_t d = c.GetDimension();
-		double volume = c.PeriodicVolume();
-
-		if (volume > 0.0) {
-			c.RemoveParticles();
-			size_t N = this->GetExpectedNumPrts(volume);
-			for (size_t i = 0; i < N; i++) {
-				//Randomly place a single point inside the fundamental cell.
-				c.Insert("a", this->rng);	
-			}
-		}
-	
-	}
+	virtual void GenerateC(Configuration & c); 
+	virtual void GenerateP(SpherePacking & c); 
 
 
 	/** Undefined member functions !! */
-	virtual void SetNumPrts(int num) { std::cout << "This is not used\n"; }
+	//virtual void SetNumPrts(int num);
 	virtual void SetPackingFraction(double phi) { std::cout << "PoissonPtgen::packing fraction is unnecessary\n"; }
-	virtual void GenerateP(SpherePacking & c) { std::cout << "PoissonPtGen::GenerateP is not defined.\n"; }
 	
 };
 

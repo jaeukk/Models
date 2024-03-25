@@ -33,17 +33,17 @@ public:
 	RSA_gen() : ConfigGen() {};
 
 	//set numberdensity = -1 if you don't want to rescale the system.
-	RSA_gen(int dimension, int numPrts, double numberdensity, double packingFraction = 1.0);
+	RSA_gen(int dimension, int N, double numberdensity, double packingFraction = 1.0);
 
 	// //Saturated RSA
-	// RSA_gen(int dimension, int numPrts, double numberdensity);
+	// RSA_gen(int dimension, int N, double numberdensity);
 
 	//CLI form
 	RSA_gen(std::istream & ifile, std::ostream & ofile);
 
 	virtual void SetNumPrts(int n) {
-		this->numMax = (int)round(n / this->numPrts);
-		this->numPrts = n;
+		this->numMax = (int)round(n / this->N);
+		this->N = n;
 	};
 	virtual void SetRho(double numberdensity) {
 		this->rho = numberdensity;
@@ -52,9 +52,9 @@ public:
 		this->targetPhi = phi;
 		this->saturated = (this->targetPhi >= 0.99*PhiC(this->d)) ? true : false;
 		if (this->saturated)
-			this->numMax = numPrts;
+			this->numMax = N;
 		else
-			this->numMax = (int)round(PhiC(this->d) / phi * this->numPrts);
+			this->numMax = (int)round(PhiC(this->d) / phi * this->N);
 	}
 	//generate a point configuration/sphere packing
 	//system will be rescaled to a given number density
@@ -90,20 +90,20 @@ double PhiC(size_t d) {
  *	RSA_gen: constructors
  ****************************/
 //set numberdensity = -1 if you don't want to rescale the system.
-RSA_gen::RSA_gen(int dimension, int numPrts, double numberdensity, double packingFraction) : ConfigGen(dimension, numPrts, numberdensity) {
-	this->d = dimension;	this->numPrts = numPrts;	this->rho = numberdensity;	this->targetPhi = packingFraction;
+RSA_gen::RSA_gen(int dimension, int N, double numberdensity, double packingFraction) : ConfigGen(dimension, N, numberdensity) {
+	this->d = dimension;	this->N = N;	this->rho = numberdensity;	this->targetPhi = packingFraction;
 	this->numThreads = 1;
 	this->saturated = (this->targetPhi >= 0.99*PhiC(this->d)) ? true : false;
 	if (this->saturated)
-		this->numMax = numPrts;
+		this->numMax = N;
 	else
-		this->numMax = (int)round(PhiC(dimension) / packingFraction * numPrts);
+		this->numMax = (int)round(PhiC(dimension) / packingFraction * N);
 }
 //Saturated RSA
-// RSA_gen::RSA_gen(int dimension, int numPrts, double numberdensity) {
-// 	this->d = dimension;	this->numPrts = numPrts;	this->rho = numberdensity;
+// RSA_gen::RSA_gen(int dimension, int N, double numberdensity) {
+// 	this->d = dimension;	this->N = N;	this->rho = numberdensity;
 // 	this->saturated = true;	this->numThreads = 1;
-// 	this->numMax = numPrts;
+// 	this->numMax = N;
 // }
 //CLI form
 RSA_gen::RSA_gen(std::istream & ifile, std::ostream & ofile) : ConfigGen(ifile, ofile) {
@@ -115,11 +115,11 @@ RSA_gen::RSA_gen(std::istream & ifile, std::ostream & ofile) : ConfigGen(ifile, 
 
 	this->saturated = (this->targetPhi >= 0.99*PhiC(this->d)) ? true : false;
 	if (this->saturated){
-		this->numMax = numPrts;
+		this->numMax = N;
 		ofile << "Saturated RSA is considered.\n";
 	}
 	else
-		this->numMax = (int)round(PhiC(this->d) / this->targetPhi * numPrts);
+		this->numMax = (int)round(PhiC(this->d) / this->targetPhi * N);
 
 	ofile << "Number of threads = ";
 	Echo(ifile, ofile, num);
@@ -141,14 +141,14 @@ void RSA_gen::GenerateP(SpherePacking &c) {
 //#ifdef RandomSequentialAddition_Included
 	bool parallel = (this->numThreads > 1) ? true : false;
 	omp_set_num_threads(this->numThreads);
-	int numCut = (this->saturated) ? (int)numPrts*1.2 : numPrts;
+	int numCut = (this->saturated) ? (int)N*1.2 : N;
 	
 	c = GenerateRSAPacking(d, this->numMax, parallel ? (-3) : 3, 1000, 6000, 0.49, this->rng.RandomInt(), Verbosity > 5 ? std::cout : logfile, nullptr, false, numCut);
 	//if (this->saturated) {
-	//	c = GenerateRSAPacking(d, numPrts, parallel, (int)numPrts*1.2);
+	//	c = GenerateRSAPacking(d, N, parallel, (int)N*1.2);
 	//}
 	//else {
-	//	c = GenerateRSAPacking(d, this->numMax, parallel, numPrts);
+	//	c = GenerateRSAPacking(d, this->numMax, parallel, N);
 	//}
 	if(Verbosity >4)
 		std::cout << "A RSA packing is generated: particle number = "<< c.NumParticle() <<"\n";
@@ -158,7 +158,7 @@ void RSA_gen::GenerateP(SpherePacking &c) {
 //#endif  
 	//Rescale systems
 	if (this->rho > 0.0) {
-		double factor = pow(this->numPrts / this->rho, 1.0/this->d);
+		double factor = pow(this->N / this->rho, 1.0/this->d);
 		c.Rescale(factor);
 	}
 }
